@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import fnmatch
 
 
 def get_changed_files():
@@ -17,17 +18,34 @@ def get_changed_files():
         sys.exit(1)
 
 
-def enforce_migration_requires_architecture():
+def matches_pattern(file, patterns):
+    for pattern in patterns:
+        if fnmatch.fnmatch(file, pattern):
+            return True
+    return False
+
+
+def enforce_documents(policy):
     changed_files = get_changed_files()
+    documents = policy.get("documents", {})
 
-    migration_changed = any(
-        f.startswith("supabase/migrations/") for f in changed_files
-    )
+    for name, doc in documents.items():
+        required_file = doc.get("file")
+        patterns = doc.get("required_on_changes", [])
+        level = doc.get("level", "blocking")
 
-    architecture_changed = "ARCHITECTURE.md" in changed_files
+        trigger = any(
+            matches_pattern(f, patterns) for f in changed_files
+        )
 
-    if migration_changed and not architecture_changed:
-        print("❌ ERROR: Migration changed but ARCHITECTURE.md was not updated.")
-        sys.exit(1)
+        if trigger:
+            if required_file not in changed_files:
+                message = f"Document '{required_file}' must be updated when changing matching files for {name}."
 
-    print("✅ Rule check passed.")
+                if level == "blocking":
+                    print(f"❌ ERROR: {message}")
+                    sys.exit(1)
+                else:
+                    print(f"⚠️ WARNING: {message}")
+
+    print("✅ All document rules passed.")
