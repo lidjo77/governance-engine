@@ -1,8 +1,12 @@
 [project]
 name = "governance-engine"
-version = "0.1.0"
+version = "0.3.0"
 description = "Policy-based governance enforcement for GitHub repositories"
 requires-python = ">=3.9"
+
+dependencies = [
+    "pyyaml"
+]
 
 [project.scripts]
 governance-engine = "governance_engine.cli:main"
