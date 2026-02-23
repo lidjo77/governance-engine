@@ -1,1 +1,3 @@
-
+version: 1
+rules:
+  require_policy: true
