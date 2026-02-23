@@ -18,9 +18,13 @@ def load_policy():
         print("❌ ERROR: policy.yml missing 'version' field.")
         sys.exit(1)
 
-    if "rules" not in policy:
-        print("❌ ERROR: policy.yml missing 'rules' field.")
+    if policy["version"] != 2:
+        print("❌ ERROR: Unsupported policy version. Expected version: 2")
         sys.exit(1)
 
-    print("✅ policy.yml structure is valid.")
+    if "documents" not in policy:
+        print("❌ ERROR: policy.yml missing 'documents' section.")
+        sys.exit(1)
+
+    print("✅ policy.yml structure is valid (v2).")
     return policy
