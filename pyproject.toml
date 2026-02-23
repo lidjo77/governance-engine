@@ -1,0 +1,12 @@
+[project]
+name = "governance-engine"
+version = "0.1.0"
+description = "Policy-based governance enforcement for GitHub repositories"
+requires-python = ">=3.9"
+
+[project.scripts]
+governance-engine = "governance_engine.cli:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
